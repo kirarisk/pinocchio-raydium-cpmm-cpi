@@ -1,0 +1,13 @@
+[package]
+name = "piniccohio-raydium-cpmm-cpi-example"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["lib","cdylib"]
+
+
+[dependencies]
+pinocchio = "0.8.4"
+pinocchio-pubkey = "0.2.4"
+pinocchio-raydium-cpmm-cpi = "0.1.0"
