@@ -25,6 +25,9 @@ impl ObservationState {
     /// The length of the `ObservationState` account data.
     pub const LEN: usize = core::mem::size_of::<ObservationState>();
 
+    /// Anchor-compatible discriminator
+    pub const DISCRIMINATOR: &'static [u8] = &[122, 174, 197, 53, 129, 9, 165, 132];
+
     /// Return a `ObservationState` from the given account info.
     ///
     /// This method performs owner and length validation on `AccountInfo`, safe borrowing
@@ -74,5 +77,43 @@ impl ObservationState {
     #[inline(always)]
     pub fn is_initialized(&self) -> bool {
         self.initialized
+    }
+
+
+    pub fn try_deserialize(buf: &mut &[u8]) -> Result<Self, ProgramError> {
+        if buf.len() < Self::DISCRIMINATOR.len() {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        
+        let given_disc = &buf[..Self::DISCRIMINATOR.len()];
+        if Self::DISCRIMINATOR != given_disc {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        
+        Self::try_deserialize_unchecked(buf)
+    }
+
+
+    pub fn try_deserialize_unchecked(buf: &mut &[u8]) -> Result<Self, ProgramError> {
+        let data: &[u8] = &buf[Self::DISCRIMINATOR.len()..];
+        if data.len() < Self::LEN {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        
+        unsafe {
+            Ok(*Self::from_bytes(data))
+        }
+    }
+
+    pub fn discriminator() -> &'static [u8] {
+        Self::DISCRIMINATOR
+    }
+
+    pub fn owner() -> Pubkey {
+        ID
+    }
+
+    pub fn size() -> usize {
+        Self::LEN + 8
     }
 } 

@@ -65,6 +65,9 @@ impl PoolState {
     /// The length of the `PoolState` account data.
     pub const LEN: usize = core::mem::size_of::<PoolState>();
 
+    /// Anchor-compatible discriminator
+    pub const DISCRIMINATOR: &'static [u8] = &[247, 237, 227, 245, 215, 195, 222, 70];
+
     /// Return a `PoolState` from the given account info.
     ///
     /// This method performs owner and length validation on `AccountInfo`, safe borrowing
@@ -109,5 +112,41 @@ impl PoolState {
     #[inline(always)]
     pub unsafe fn from_bytes(bytes: &[u8]) -> &Self {
         &*(bytes.as_ptr() as *const PoolState)
+    }
+
+    pub fn try_deserialize(buf: &mut &[u8]) -> Result<Self, ProgramError> {
+        if buf.len() < Self::DISCRIMINATOR.len() {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        
+        let given_disc = &buf[..Self::DISCRIMINATOR.len()];
+        if Self::DISCRIMINATOR != given_disc {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        
+        Self::try_deserialize_unchecked(buf)
+    }
+
+    pub fn try_deserialize_unchecked(buf: &mut &[u8]) -> Result<Self, ProgramError> {
+        let data: &[u8] = &buf[Self::DISCRIMINATOR.len()..];
+        if data.len() < Self::LEN {
+            return Err(ProgramError::InvalidAccountData);
+        }
+        
+        unsafe {
+            Ok(*Self::from_bytes(data))
+        }
+    }
+
+    pub fn discriminator() -> &'static [u8] {
+        Self::DISCRIMINATOR
+    }
+
+    pub fn owner() -> Pubkey {
+        ID
+    }
+
+    pub fn size() -> usize {
+        Self::LEN + 8
     }
 } 
