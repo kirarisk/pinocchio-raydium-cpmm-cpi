@@ -31,14 +31,14 @@ impl ObservationState {
     /// the account data.
     #[inline]
     pub fn from_account_info(account_info: &AccountInfo) -> Result<Ref<ObservationState>, ProgramError> {
-        if account_info.data_len() != Self::LEN {
+        if account_info.data_len() != Self::LEN + 8 {
             return Err(ProgramError::InvalidAccountData);
         }
         if !account_info.is_owned_by(&ID) {
             return Err(ProgramError::InvalidAccountOwner);
         }
         Ok(Ref::map(account_info.try_borrow_data()?, |data| unsafe {
-            Self::from_bytes(data)
+            Self::from_bytes(&data[8..])
         }))
     }
 
@@ -55,13 +55,13 @@ impl ObservationState {
     pub unsafe fn from_account_info_unchecked(
         account_info: &AccountInfo,
     ) -> Result<&Self, ProgramError> {
-        if account_info.data_len() != Self::LEN {
+        if account_info.data_len() != Self::LEN + 8 {
             return Err(ProgramError::InvalidAccountData);
         }
         if account_info.owner() != &ID {
             return Err(ProgramError::InvalidAccountOwner);
         }
-        Ok(Self::from_bytes(account_info.borrow_data_unchecked()))
+        Ok(Self::from_bytes(&account_info.borrow_data_unchecked()[8..]))
     }
 
     /// Return a `ObservationState` from the given bytes.
