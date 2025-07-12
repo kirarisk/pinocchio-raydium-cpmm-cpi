@@ -14,7 +14,7 @@
 
 This crate contains [`pinocchio`](https://crates.io/crates/pinocchio) helpers to perform cross-program invocations (CPIs) for Raydium CPMM instructions.
 
-Each instruction defines a `struct` with the accounts and parameters required. Once all values are set, you can call directly `invoke` to perform the CPI.
+Each instruction defines a `struct` with the accounts and parameters required. Once all values are set, you can call directly `invoke` or `invoke_signed` to perform the CPI.
 
 This is a `no_std` crate.
 
