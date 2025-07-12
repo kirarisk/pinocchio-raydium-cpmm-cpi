@@ -95,9 +95,6 @@ impl PoolState {
     pub unsafe fn from_account_info_unchecked(
         account_info: &AccountInfo,
     ) -> Result<&Self, ProgramError> {
-        if account_info.data_len() != Self::LEN + 8 {
-            return Err(ProgramError::InvalidAccountData);
-        }
         if account_info.owner() != &ID {
             return Err(ProgramError::InvalidAccountOwner);
         }

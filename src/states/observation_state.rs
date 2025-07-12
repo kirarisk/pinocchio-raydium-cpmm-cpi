@@ -31,9 +31,6 @@ impl ObservationState {
     /// the account data.
     #[inline]
     pub fn from_account_info(account_info: &AccountInfo) -> Result<Ref<ObservationState>, ProgramError> {
-        if account_info.data_len() != Self::LEN + 8 {
-            return Err(ProgramError::InvalidAccountData);
-        }
         if !account_info.is_owned_by(&ID) {
             return Err(ProgramError::InvalidAccountOwner);
         }
