@@ -20,6 +20,9 @@ This is a `no_std` crate.
 
 > **Note:** The API defined in this crate is subject to change.
 
+## Setup
+```cargo add pinocchio-raydium-cpmm-cpi
+
 ## Examples
 
 Initializing a CPMM pool:
